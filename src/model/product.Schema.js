@@ -16,9 +16,10 @@ const productSchema = mongoose.Schema({
   tax: {
     type: String,
   },
-  category: {
-    type: [String],
-  },
+  categoryId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+  }],
   hsnCode: {
     type: Number,
   },
