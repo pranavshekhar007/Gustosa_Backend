@@ -5,6 +5,7 @@ const productSchema = mongoose.Schema({
   // step 1
   name: {
     type: String,
+    required: true,
   },
   tags: {
     type: [String],
@@ -15,12 +16,24 @@ const productSchema = mongoose.Schema({
   tax: {
     type: String,
   },
-  hsnCode: {
-    type: String,
+  category: {
+    type: [String],
   },
+  hsnCode: {
+    type: Number,
+  },
+  GTIN: {
+    type: Number,
+  },
+
   shortDescription: {
     type: String,
   },
+
+  
+
+
+
 
   // step 2 
   stockQuantity: {
@@ -40,15 +53,97 @@ const productSchema = mongoose.Schema({
   ingredients: {
     type: String,
   },
+  packOf: {
+    type: Number,
+  },
+  numberOfPieces: {
+    type: Number,
+  },
+ 
+  currency: {
+    type: String,
+  },
+  MRP: {
+    type: Number,
+    // required:true,
+  },
+  offerPrice: {
+    type: Number,
+    // required: true,
+  },
+  salePrice: {
+    type: Number,
+  },
+  saleStartDate:{
+    type: Date,
+  },
+  saleEndDate:{
+    type: Date,
+  },
+  itemWeight: {
+    type: Number,
+  },
+  packageWeight: {
+    type: Number,
+  },
   description: { 
     type: String 
   },
-  isSpecialAppearance: {
-    type: Boolean,
-    default: false,
-  },
-  // step 3
+  
 
+  // Nutrition Information
+  packSize: {
+    type: Number,
+  },
+  servingSize: {
+    type: Number, 
+  },
+  energy: {
+    type: Number, 
+  },
+  protein: {
+    type: Number,
+  },
+  carbohydrate: {
+    type: Number,
+  },
+  fat: {
+    type: Number,
+  },
+  saturatedFat: {
+    type: Number,
+  },
+  transFat: {
+    type: Number,
+  },
+  totalSugar: {
+    type: Number,
+  },
+  addedSugar: {
+    type: Number,
+  },
+  dietaryFiber: {
+    type: Number,
+  },
+  calcium: {
+    type: Number,
+  },
+  iron: {
+    type: Number,
+  },
+  phosphorus: {
+    type: Number,
+  },
+  potassium: {
+    type: Number,
+  },
+  sodium: {
+    type: Number,
+  },
+
+  
+
+  // step 3
   productHeroImage: {
     type: String,
   },
@@ -56,12 +151,25 @@ const productSchema = mongoose.Schema({
   productGallery: {
     type: [String],
   },
-  // step 4 attributes
 
+
+
+
+
+  // step 4 attributes
   productOtherDetails: [
     {
       key: { type: String },
       value: [{ type: String }],
+    },
+  ],
+  productVariants: [
+    {
+      variantKey: { type: String },
+      variantValue: { type: String },
+      variantPrice: { type: Number },
+      variantDiscountedPrice: { type: Number },
+      variantImage: { type: String },
     },
   ],
 });

@@ -7,16 +7,14 @@ const bookingSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["orderPlaced", "partiallyDelivered", "completed", "cancelled"],
+    default: "orderPlaced",
+    enum: ["orderPlaced", "orderPacked", "outForDelivery", "completed", "cancelled"],
   },
   signature: {
     type: String,
     require: true,
   },
-  orderId: {
-    type: String,
-    require: true,
-  },
+
   modeOfPayment: {
     type: String,
     enum: ["COD", "Online"],
@@ -29,23 +27,7 @@ const bookingSchema = mongoose.Schema({
       productId: { type: String, ref: "Product" },
       quantity: { type: Number },
       totalPrice: { type: Number },
-      deliveryStatus: {
-        type: String,
-        enum: [
-          "orderPlaced",
-          "orderPacked",
-          "driverAssigned",
-          "driverAccepted",
-          "pickedOrder",
-          "completed",
-          "cancelled",
-        ],
-      },
-      driverId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Driver",
-        required: true,
-      },
+      productHeroImage: { type: String }
     },
   ],
   userId: {

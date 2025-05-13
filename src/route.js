@@ -29,6 +29,7 @@ const ticketController = require("./controller/ticketController");
 const chatController = require("./controller/chatController");
 const notifyController = require("./controller/notifyController");
 const productFaqController = require("./controller/productFaqController");
+const comboProductController = require("./controller/comboProductController");
 
 router.use("/user", userController);
 router.use("/driver", driverController);
@@ -41,6 +42,7 @@ router.use("/brand", brandController);
 router.use("/attribute-set", attributeSetController);
 router.use("/attribute", attributeController);
 router.use("/product", productController);
+router.use("/combo-product", comboProductController);
 router.use("/address", addressController);
 router.use("/tag", tagController);
 router.use("/tax", taxController);

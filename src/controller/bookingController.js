@@ -13,9 +13,9 @@ const path = require("path");
 
 bookingController.post("/create", async (req, res) => {
   try {
-    const { userId, totalAmount, status, product,
+    const { userId, totalAmount, product,
        bookingQuantity, bookingPrice, modeOfPayment,
-         paymentId, signature, orderId, addressId  } = req.body;
+         paymentId, signature, addressId, status  } = req.body;
 
     // Validate required fields
     if (!userId) {
@@ -25,25 +25,17 @@ bookingController.post("/create", async (req, res) => {
       });
     }
 
-    if (!status) {
-      return sendResponse(res, 400, "Failed", {
-        message: "status is required in the request body",
-        statusCode: 400,
-      });
-    }
-
     const bookingData = {
       userId,
       totalAmount,
-      status,
       product,
       bookingQuantity,
       bookingPrice,
       modeOfPayment,
       paymentId,
       signature,
-      orderId,
-      addressId
+      addressId,
+      status,
     };
 
     const bookingCreated = await Booking.create(bookingData);
@@ -75,7 +67,7 @@ bookingController.post("/list", async (req, res) => {
 
     const query = {};
     if (status) query.status = status;
-    if (searchKey) query.name = { $regex: searchKey, $options: "i" };
+    if (searchKey) query.status = { $regex: searchKey, $options: "i" };
 
     // Construct sorting object
     const sortField = sortByField || "createdAt";
@@ -84,22 +76,38 @@ bookingController.post("/list", async (req, res) => {
 
     // Fetch the booking list
     const bookingList = await Booking.find(query)
+      .populate("userId", "firstName lastName")
+      .populate("addressId", "name")
       .sort(sortOption)
       .limit(parseInt(pageCount))
       .skip(parseInt(pageNo - 1) * parseInt(pageCount))
       .populate({
-        path: "product",
-        select: "name description",
+        path: "product.productId",
+        select: "name description productHeroImage",
       });
     const totalCount = await Booking.countDocuments({});
-    const activeCount = await Booking.countDocuments({ status: true });
+    const statusCounts = await Booking.aggregate([
+      { $group: { _id: "$status", count: { $sum: 1 } } }
+    ]);
+    
+    // Map the aggregation result
+    const statusCountMap = {
+      orderPlaced: 0,
+      orderPacked: 0,
+      outForDelivery: 0,
+      completed: 0,
+      cancelled: 0,
+    };
+    
+    statusCounts.forEach(({ _id, count }) => {
+      statusCountMap[_id] = count;
+    });
     sendResponse(res, 200, "Success", {
       message: "Booking list retrieved successfully!",
       data: bookingList,
       documentCount: {
         totalCount,
-        activeCount,
-        inactiveCount: totalCount - activeCount,
+        ...statusCountMap,
       },
       statusCode: 200,
     });
