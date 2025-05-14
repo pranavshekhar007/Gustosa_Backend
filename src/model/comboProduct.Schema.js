@@ -3,16 +3,14 @@ const timestamps = require("mongoose-timestamp");
 
 const comboProductSchema = new mongoose.Schema(
   {
-    itemName: {
+    // Step 1
+    name: {
       type: String,
     },
-    selectedProducts: [{
+    productId: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product',
     }],
-    stockQuantity: {
-      type: String,
-    },
     gtin: {
       type: Number,
     },
@@ -22,7 +20,9 @@ const comboProductSchema = new mongoose.Schema(
     shortDescription: {
       type: String,
     },
-    longDescription: {
+
+    // step 2
+    stockQuantity: {
       type: String,
     },
     pricing: {
@@ -45,6 +45,18 @@ const comboProductSchema = new mongoose.Schema(
       packageWeight: {
         type: Number,
       },
+    },
+    longDescription: {
+      type: String,
+    },
+    productHeroImage: {
+      type: String,
+    },
+    productGallery: {
+      type: [String],
+    },
+    productVideo: {
+      type: String,
     },
   },
 );

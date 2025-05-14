@@ -3,7 +3,6 @@ const { sendResponse } = require("../utils/common");
 require("dotenv").config();
 const Product = require("../model/product.Schema");
 const productController = express.Router();
-require("dotenv").config();
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 const auth = require("../utils/auth");
