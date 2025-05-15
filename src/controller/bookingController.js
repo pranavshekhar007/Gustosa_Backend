@@ -77,7 +77,7 @@ bookingController.post("/list", async (req, res) => {
     // Fetch the booking list
     const bookingList = await Booking.find(query)
       .populate("userId", "firstName lastName")
-      .populate("addressId", "name")
+      .populate("addressId")
       .sort(sortOption)
       .limit(parseInt(pageCount))
       .skip(parseInt(pageNo - 1) * parseInt(pageCount))
@@ -85,12 +85,15 @@ bookingController.post("/list", async (req, res) => {
         path: "product.productId",
         select: "name description productHeroImage",
       });
-    const totalCount = await Booking.countDocuments({});
+
+    const totalCount = await Booking.countDocuments(query);
+
     const statusCounts = await Booking.aggregate([
-      { $group: { _id: "$status", count: { $sum: 1 } } }
+      { $match: query },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
     ]);
-    
-    // Map the aggregation result
+
+    // Map status counts
     const statusCountMap = {
       orderPlaced: 0,
       orderPacked: 0,
@@ -98,16 +101,48 @@ bookingController.post("/list", async (req, res) => {
       completed: 0,
       cancelled: 0,
     };
-    
+
     statusCounts.forEach(({ _id, count }) => {
       statusCountMap[_id] = count;
     });
+
+    // 📌 Date calculations
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    // 📌 Counts based on createdAt date
+    const todaysOrder = await Booking.countDocuments({
+      ...query,
+      createdAt: { $gte: todayStart },
+    });
+
+    const thisWeekOrder = await Booking.countDocuments({
+      ...query,
+      createdAt: { $gte: weekStart },
+    });
+
+    const thisMonthOrder = await Booking.countDocuments({
+      ...query,
+      createdAt: { $gte: monthStart },
+    });
+
     sendResponse(res, 200, "Success", {
       message: "Booking list retrieved successfully!",
       data: bookingList,
       documentCount: {
         totalCount,
         ...statusCountMap,
+        todaysOrder,
+        thisWeekOrder,
+        thisMonthOrder,
       },
       statusCode: 200,
     });
@@ -118,6 +153,7 @@ bookingController.post("/list", async (req, res) => {
     });
   }
 });
+
 
 bookingController.get("/details/:userId", async (req, res) => {
   try {

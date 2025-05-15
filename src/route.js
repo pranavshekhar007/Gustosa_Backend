@@ -30,6 +30,7 @@ const chatController = require("./controller/chatController");
 const notifyController = require("./controller/notifyController");
 const productFaqController = require("./controller/productFaqController");
 const comboProductController = require("./controller/comboProductController");
+const bulkOrderController = require("./controller/bulkOrderController");
 
 router.use("/user", userController);
 router.use("/driver", driverController);
@@ -61,6 +62,7 @@ router.use("/ticket", ticketController);
 router.use("/chat", chatController);
 router.use("/notify", notifyController);
 router.use("/productFaq", productFaqController);
+router.use("/bulk-order", bulkOrderController);
 
 
 module.exports = router;
